@@ -1,21 +1,33 @@
-```txt
-npm install
-npm run dev
-```
+# Agent Backend
 
-```txt
-npm run deploy
-```
+This is the backend API for the Agent project, built with [Hono](https://hono.dev/) and designed to run on Cloudflare Workers.
 
-[For generating/synchronizing types based on your Worker configuration run](https://developers.cloudflare.com/workers/wrangler/commands/#types):
+## Requirements
+- Node.js
 
-```txt
-npm run cf-typegen
-```
+## Getting Started
 
-Pass the `CloudflareBindings` as generics when instantiating `Hono`:
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-```ts
-// src/index.ts
-const app = new Hono<{ Bindings: CloudflareBindings }>()
-```
+2. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+3. Generate/synchronize types based on your Worker configuration:
+   ```bash
+   npm run cf-typegen
+   ```
+
+4. Deploy to Cloudflare Workers:
+   ```bash
+   npm run deploy
+   ```
+
+## Tech Stack
+- [Hono](https://hono.dev/)
+- [Cloudflare Workers](https://workers.cloudflare.com/)
+- [TypeScript](https://www.typescriptlang.org/)
