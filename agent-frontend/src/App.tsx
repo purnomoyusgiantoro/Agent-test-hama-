@@ -8,8 +8,8 @@ function App() {
     if (!input) return
     setMessages([...messages, { role: 'user', text: input }])
     
-    // Ganti URL ini dengan URL Cloudflare-mu nanti
-    const res = await fetch('http://localhost:8787/api/chat', {
+    // URL ini sekarang mengarah ke server Cloudflare Anda yang sudah online
+    const res = await fetch('https://agent-backend.pyxvin124.workers.dev/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ sessionId: 'session-1', prompt: input })

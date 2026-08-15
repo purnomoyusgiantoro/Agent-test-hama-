@@ -25,7 +25,7 @@
     {
       "binding": "DB",
       "database_name": "agent-db",
-      "database_id": "local-agent-db"
+      "database_id": "e6d9e305-ad8d-4716-867c-9d13cec897bd"
     }
   ],
   // "ai": {
