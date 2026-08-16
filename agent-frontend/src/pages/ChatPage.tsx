@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { Menu, Paperclip, Camera, Send, User, Plus, X, Leaf } from 'lucide-react'
+import AiMessage from '../components/AiMessage'
 
 interface Attachment {
   mimeType: string;
@@ -251,7 +252,7 @@ export default function ChatPage() {
                   }`}>
                     {msg.role === 'user' ? <User size={16} /> : <Leaf size={16} />}
                   </div>
-                  <div className={`max-w-[80%] rounded-2xl px-5 py-3 flex flex-col gap-2 ${
+                  <div className={`max-w-[85%] rounded-2xl px-5 py-4 flex flex-col gap-3 ${
                     msg.role === 'user' 
                       ? 'bg-primary text-primary-foreground rounded-tr-sm' 
                       : 'bg-white border border-border text-foreground rounded-tl-sm shadow-sm'
@@ -259,7 +260,11 @@ export default function ChatPage() {
                     {msg.attachmentUrl && (
                       <img src={msg.attachmentUrl} alt="Uploaded attachment" className="rounded-xl max-w-full h-auto max-h-64 object-cover border border-border/50 shadow-sm" />
                     )}
-                    {msg.text && <span className="whitespace-pre-wrap">{msg.text}</span>}
+                    {msg.role === 'user' ? (
+                      msg.text && <span className="whitespace-pre-wrap">{msg.text}</span>
+                    ) : (
+                      <AiMessage content={msg.text} />
+                    )}
                   </div>
                 </div>
               ))}
