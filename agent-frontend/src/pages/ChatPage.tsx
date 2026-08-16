@@ -24,6 +24,7 @@ export default function ChatPage() {
     isLoading,
     setIsLoading,
     handleNewChat,
+    switchSession,
     saveSessionLocally
   } = useChatSession()
 
@@ -88,7 +89,7 @@ export default function ChatPage() {
       const data = await res.json()
       
       if (res.ok) {
-        setMessages(prev => [...prev, { role: 'ai', text: data.response }])
+        setMessages(prev => [...prev, { role: 'ai', text: data.response, products: data.products || [] }])
       } else {
         setMessages(prev => [...prev, { role: 'ai', text: data.error || 'Server returned an error.' }])
       }
@@ -112,6 +113,7 @@ export default function ChatPage() {
         sessionId={sessionId}
         savedSessions={savedSessions}
         onNewChat={handleNewChat}
+        onSwitchSession={switchSession}
       />
 
       <CameraModal 
@@ -138,9 +140,6 @@ export default function ChatPage() {
               <Share2 size={14} />
               <span className="hidden sm:inline">Bagikan Chat</span>
             </button>
-            <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
-              <User size={16} />
-            </div>
           </div>
         </header>
 

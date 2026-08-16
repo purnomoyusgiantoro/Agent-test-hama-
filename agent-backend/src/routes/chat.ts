@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { z } from 'zod'
 import { getAgentConfig, saveChatMessage, getChatHistory } from '../services/db'
 import { generateGeminiContent, GeminiAttachment } from '../services/ai'
+import { matchProducts } from '../services/products'
 import { PLANT_DETECTION_PROMPT } from '../utils/prompts/plantPrompt'
 
 const chatRouter = new Hono<{ Bindings: CloudflareBindings }>()
@@ -69,7 +70,15 @@ chatRouter.post('/', async (c) => {
     // 5. Save AI message
     await saveChatMessage(c.env.DB, sessionId, 'ai', aiResponse)
 
-    return c.json({ response: aiResponse })
+    // 6. Match products based on AI response keywords
+    let products: any[] = []
+    try {
+      products = await matchProducts(c.env.DB, aiResponse)
+    } catch (e) {
+      console.error('Product matching failed:', e)
+    }
+
+    return c.json({ response: aiResponse, products })
   } catch (err) {
     console.error(err)
     return c.json({ error: 'Terjadi kesalahan pada server' }, 500)

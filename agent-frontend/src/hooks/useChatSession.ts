@@ -10,6 +10,13 @@ export interface Message {
   role: string;
   text: string;
   attachmentUrl?: string;
+  products?: Array<{
+    id: number;
+    name: string;
+    price: number;
+    image_url: string;
+    shopee_url: string;
+  }>;
 }
 
 export function useChatSession() {
@@ -64,6 +71,14 @@ export function useChatSession() {
     window.history.pushState(null, '', `?session=${newId}`)
   }
 
+  const switchSession = (sid: string) => {
+    if (sid === sessionId) return;
+    setSessionId(sid)
+    setMessages([])
+    window.history.pushState(null, '', `?session=${sid}`)
+    fetchHistory(sid)
+  }
+
   const saveSessionLocally = (sid: string, firstMessage: string) => {
     const localSessions: SessionInfo[] = JSON.parse(localStorage.getItem('plantguard_sessions') || '[]')
     if (!localSessions.find(s => s.id === sid)) {
@@ -86,6 +101,7 @@ export function useChatSession() {
     isLoading,
     setIsLoading,
     handleNewChat,
+    switchSession,
     saveSessionLocally
   }
 }

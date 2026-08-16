@@ -7,15 +7,15 @@
 
   --color-primary: #16A34A;
   --color-primary-foreground: #FFFFFF;
-  --color-secondary: #4ADE80;
-  --color-secondary-foreground: #052E16;
-  --color-background: #F0FDF4;
-  --color-foreground: #052E16;
-  --color-muted: #DCFCE7;
-  --color-muted-foreground: #4B5563;
-  --color-border: #BBF7D0;
-  --color-accent: #78716C;
-  --color-danger: #DC2626;
+  --color-secondary: #F1F5F9;
+  --color-secondary-foreground: #334155;
+  --color-background: #FFFFFF;
+  --color-foreground: #0F172A;
+  --color-muted: #F8FAFC;
+  --color-muted-foreground: #64748B;
+  --color-border: #E2E8F0;
+  --color-accent: #64748B;
+  --color-danger: #EF4444;
   --color-warning: #F59E0B;
 }
 

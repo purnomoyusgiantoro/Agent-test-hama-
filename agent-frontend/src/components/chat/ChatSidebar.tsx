@@ -7,6 +7,7 @@ interface ChatSidebarProps {
   sessionId: string;
   savedSessions: SessionInfo[];
   onNewChat: () => void;
+  onSwitchSession: (id: string) => void;
 }
 
 export default function ChatSidebar({
@@ -14,17 +15,21 @@ export default function ChatSidebar({
   setIsSidebarOpen,
   sessionId,
   savedSessions,
-  onNewChat
+  onNewChat,
+  onSwitchSession
 }: ChatSidebarProps) {
   
   const handleSessionClick = (id: string) => {
-    window.location.href = `/?session=${id}`
+    onSwitchSession(id)
+    if (window.innerWidth < 1024) {
+      setIsSidebarOpen(false)
+    }
   }
 
   return (
     <>
       {/* Sidebar Container */}
-      <div className={`fixed inset-y-0 left-0 z-40 w-72 bg-muted transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:block ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <div className={`fixed inset-y-0 left-0 z-40 w-72 bg-[#F9F9F9] border-r border-border transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:block ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex flex-col h-full p-4">
           
           <div className="flex justify-between items-center mb-6">
@@ -42,9 +47,9 @@ export default function ChatSidebar({
               onNewChat()
               setIsSidebarOpen(false)
             }} 
-            className="flex items-center gap-2 bg-white/50 hover:bg-white/80 transition-colors border border-border p-3 rounded-2xl w-full text-left font-medium text-foreground"
+            className="flex items-center gap-2 bg-white hover:bg-slate-100 transition-colors border border-border shadow-sm px-4 py-2.5 rounded-full w-full text-left font-medium text-foreground text-sm"
           >
-            <Plus size={20} /> Percakapan Baru
+            <Plus size={18} /> Chat Baru
           </button>
           
           <div className="mt-8 flex-1 overflow-y-auto pr-2">
@@ -56,13 +61,10 @@ export default function ChatSidebar({
                 <div 
                   key={session.id}
                   onClick={() => handleSessionClick(session.id)}
-                  className={`px-3 py-2 mb-1 flex flex-col gap-1 text-sm rounded-lg cursor-pointer transition-colors ${sessionId === session.id ? 'bg-primary/10 text-primary' : 'text-foreground hover:bg-black/5'}`}
+                  className={`px-3 py-2.5 mb-1 flex flex-col gap-0.5 text-sm rounded-xl cursor-pointer transition-colors ${sessionId === session.id ? 'bg-primary/10 text-primary font-medium' : 'text-foreground hover:bg-black/5'}`}
                 >
-                  <div className="flex items-center gap-2 truncate">
-                    <MessageSquare size={14} className={sessionId === session.id ? 'text-primary' : 'text-muted-foreground'} />
-                    <span className="truncate font-medium">{session.title}</span>
-                  </div>
-                  <span className="text-[10px] text-muted-foreground ml-5">{session.date}</span>
+                  <span className="truncate">{session.title}</span>
+                  <span className="text-[10px] text-muted-foreground">{session.date}</span>
                 </div>
               ))
             )}
