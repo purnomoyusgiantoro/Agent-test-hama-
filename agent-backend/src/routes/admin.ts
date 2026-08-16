@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import { timingSafeEqual } from 'hono/utils/buffer'
 import { getAgentConfig, setAgentConfig } from '../services/db'
+import { getAllProducts, addProduct, addProductsBulk, updateProduct, deleteProduct } from '../services/products'
 
 const adminRouter = new Hono<{ Bindings: CloudflareBindings & { ADMIN_PASSWORD?: string } }>()
 
@@ -85,4 +86,65 @@ adminRouter.get('/history', adminAuth, async (c) => {
   }
 })
 
+// ── Product CRUD ──
+
+adminRouter.get('/products', adminAuth, async (c) => {
+  try {
+    const products = await getAllProducts(c.env.DB)
+    return c.json({ success: true, products })
+  } catch (err) {
+    console.error(err)
+    return c.json({ success: false, error: 'Gagal mengambil produk' }, 500)
+  }
+})
+
+adminRouter.post('/products', adminAuth, async (c) => {
+  try {
+    const product = await c.req.json()
+    await addProduct(c.env.DB, product)
+    return c.json({ success: true })
+  } catch (err) {
+    console.error(err)
+    return c.json({ success: false, error: 'Gagal menambah produk' }, 500)
+  }
+})
+
+adminRouter.post('/products/bulk', adminAuth, async (c) => {
+  try {
+    const { products } = await c.req.json()
+    if (!Array.isArray(products)) {
+      return c.json({ success: false, error: 'Format tidak valid. Harus array.' }, 400)
+    }
+    await addProductsBulk(c.env.DB, products)
+    return c.json({ success: true, inserted: products.length })
+  } catch (err) {
+    console.error('Gagal import massal:', err)
+    return c.json({ success: false, error: 'Gagal import massal' }, 500)
+  }
+})
+
+adminRouter.put('/products/:id', adminAuth, async (c) => {
+  try {
+    const id = Number(c.req.param('id'))
+    const product = await c.req.json()
+    await updateProduct(c.env.DB, id, product)
+    return c.json({ success: true })
+  } catch (err) {
+    console.error(err)
+    return c.json({ success: false, error: 'Gagal mengupdate produk' }, 500)
+  }
+})
+
+adminRouter.delete('/products/:id', adminAuth, async (c) => {
+  try {
+    const id = Number(c.req.param('id'))
+    await deleteProduct(c.env.DB, id)
+    return c.json({ success: true })
+  } catch (err) {
+    console.error(err)
+    return c.json({ success: false, error: 'Gagal menghapus produk' }, 500)
+  }
+})
+
 export default adminRouter
+
