@@ -6,16 +6,16 @@ import adminRouter from './routes/admin'
 
 const app = new Hono<{ Bindings: CloudflareBindings }>()
 
-// Security headers
+// Tambahkan secure headers (XSS Protection, HSTS, No-Sniff, dll)
 app.use('*', secureHeaders())
 
-// CORS
+// Izinkan Frontend mengakses API ini dengan CORS yang diperketat
 app.use('/*', cors({
   origin: (origin) => {
     if (origin && (origin.endsWith('.pages.dev') || origin === 'http://localhost:5173')) {
       return origin;
     }
-    return 'http://localhost:5173';
+    return 'http://localhost:5173'; // Fallback aman
   },
 }))
 
