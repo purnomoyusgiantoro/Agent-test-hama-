@@ -1,17 +1,26 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+import { secureHeaders } from 'hono/secure-headers'
+import { timingSafeEqual } from 'hono/utils/buffer'
 import { z } from 'zod'
 import { PLANT_DETECTION_PROMPT } from './plantPrompt'
 
 const app = new Hono<{ Bindings: CloudflareBindings }>()
 
-// Izinkan Frontend mengakses API ini dengan CORS secara dinamis untuk environment Pages
+// Tambahkan secure headers (XSS Protection, HSTS, No-Sniff, dll)
+app.use('*', secureHeaders())
+
+// Izinkan Frontend mengakses API ini dengan CORS yang diperketat
 app.use('/*', cors({
   origin: (origin) => {
-    if (origin && (origin.endsWith('.pages.dev') || origin === 'http://localhost:5173')) {
+    const allowedOrigins = [
+      'https://64847ed7.agent-frontend-bn0.pages.dev',
+      'http://localhost:5173'
+    ];
+    if (origin && allowedOrigins.includes(origin)) {
       return origin;
     }
-    return 'http://localhost:5173';
+    return 'http://localhost:5173'; // Fallback aman
   },
 }))
 
@@ -130,15 +139,22 @@ app.post('/api/chat', async (c) => {
 // ADMIN ENDPOINTS
 // ============================================================
 
-// Middleware: Verifikasi admin token (sederhana)
+// Middleware: Verifikasi admin token dengan constant-time comparison
 const adminAuth = async (c: any, next: any) => {
   const authHeader = c.req.header('Authorization')
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return c.json({ error: 'Unauthorized' }, 401)
   }
   const token = authHeader.replace('Bearer ', '')
-  const adminPassword = (c.env as any).ADMIN_PASSWORD || 'admin123'
-  if (token !== adminPassword) {
+  const adminPassword = (c.env as any).ADMIN_PASSWORD
+  
+  if (!adminPassword) {
+    console.error('CRITICAL SECURITY ERROR: ADMIN_PASSWORD is not set in environment variables.')
+    return c.json({ error: 'Server configuration error' }, 500)
+  }
+
+  const isValid = await timingSafeEqual(token, adminPassword)
+  if (!isValid) {
     return c.json({ error: 'Invalid credentials' }, 401)
   }
   await next()
@@ -148,8 +164,15 @@ const adminAuth = async (c: any, next: any) => {
 app.post('/api/admin/login', async (c) => {
   try {
     const { password } = await c.req.json()
-    const adminPassword = (c.env as any).ADMIN_PASSWORD || 'admin123'
-    if (password === adminPassword) {
+    const adminPassword = (c.env as any).ADMIN_PASSWORD
+
+    if (!adminPassword) {
+      console.error('CRITICAL SECURITY ERROR: ADMIN_PASSWORD is not set in environment variables.')
+      return c.json({ error: 'Server configuration error' }, 500)
+    }
+
+    const isValid = await timingSafeEqual(password, adminPassword)
+    if (isValid) {
       return c.json({ success: true, token: adminPassword })
     }
     return c.json({ error: 'Password salah' }, 401)
