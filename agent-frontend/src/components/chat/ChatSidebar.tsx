@@ -1,4 +1,4 @@
-import { Menu, Plus, Leaf, MessageSquare } from 'lucide-react'
+import { Menu, Plus, Leaf } from 'lucide-react'
 import type { SessionInfo } from '../../hooks/useChatSession'
 
 interface ChatSidebarProps {

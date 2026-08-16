@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { Menu, User, Share2 } from 'lucide-react'
+import { Menu, Share2 } from 'lucide-react'
 
 // Hooks
 import { useChatSession } from '../hooks/useChatSession'
