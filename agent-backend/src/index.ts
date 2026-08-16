@@ -5,14 +5,14 @@ import { HUMANIZER_PROMPT } from './humanizerPrompt'
 
 const app = new Hono<{ Bindings: CloudflareBindings }>()
 
-const allowedOrigins = [
-  'http://localhost:5173',
-  'https://61afd88e.agent-frontend-bn0.pages.dev'
-]
-
-// Izinkan Frontend mengakses API ini dengan CORS yang diperketat
+// Izinkan Frontend mengakses API ini dengan CORS secara dinamis untuk environment Pages
 app.use('/*', cors({
-  origin: allowedOrigins,
+  origin: (origin) => {
+    if (origin && (origin.endsWith('.pages.dev') || origin === 'http://localhost:5173')) {
+      return origin;
+    }
+    return 'http://localhost:5173';
+  },
 }))
 
 // Skema validasi menggunakan Zod (Mitigasi Input Injection & Malformed Data)
