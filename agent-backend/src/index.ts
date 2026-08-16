@@ -13,11 +13,7 @@ app.use('*', secureHeaders())
 // Izinkan Frontend mengakses API ini dengan CORS yang diperketat
 app.use('/*', cors({
   origin: (origin) => {
-    const allowedOrigins = [
-      'https://64847ed7.agent-frontend-bn0.pages.dev',
-      'http://localhost:5173'
-    ];
-    if (origin && allowedOrigins.includes(origin)) {
+    if (origin && (origin.endsWith('.pages.dev') || origin === 'http://localhost:5173')) {
       return origin;
     }
     return 'http://localhost:5173'; // Fallback aman
