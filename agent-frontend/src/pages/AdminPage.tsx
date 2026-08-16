@@ -531,9 +531,9 @@ export default function AdminPage() {
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1.5">Harga (Rp)</label>
                     <input
-                      type="number"
+                      type="text"
                       value={productForm.price || ''}
-                      onChange={e => setProductForm(p => ({ ...p, price: Number(e.target.value) }))}
+                      onChange={e => setProductForm(p => ({ ...p, price: parseInt(e.target.value.replace(/\D/g, '')) || 0 }))}
                       placeholder="85000"
                       className="w-full px-4 py-2.5 rounded-xl border border-border bg-slate-50 text-foreground outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm"
                     />
