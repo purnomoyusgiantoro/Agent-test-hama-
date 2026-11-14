@@ -1,0 +1,10 @@
+# Large installers / binaries (exceeds GitHub 100 MB limit)
+orca-windows-setup.exe
+*.exe
+
+# Local tooling / environment
+.wrangler/
+node_modules/
+.env
+.env.*
+!.env.example
